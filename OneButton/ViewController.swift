@@ -30,8 +30,8 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
     
     func tap(sender: UIGestureRecognizer){
         var dirPath: AnyObject = NSSearchPathForDirectoriesInDomains( .DocumentDirectory,  .UserDomainMask, true)[0]
-        var pathArray = [dirPath, "hello.wav"]
-        var url = NSURL.fileURLWithPathComponents(pathArray)
+        var soundFilePath = dirPath.stringByAppendingPathComponent("hello.wav")
+        var url = NSURL(fileURLWithPath: soundFilePath)
         var error: NSError?
         do {
             audioPlayer = try AVAudioPlayer(contentsOfURL: url)
@@ -68,12 +68,19 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             }
             
             var dirPath: AnyObject = NSSearchPathForDirectoriesInDomains( .DocumentDirectory,  .UserDomainMask, true)[0]
-            var pathArray = [dirPath, "hello.wav"]
-            var url = NSURL.fileURLWithPathComponents(pathArray)
+            var soundFilePath = dirPath.stringByAppendingPathComponent("hello.wav")
+            var url = NSURL(fileURLWithPath: soundFilePath)
             
             print("url : \(url)")
             
-            audioRecorder = try? AVAudioRecorder(URL:url, settings: nil)
+            let settings = [
+                AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+                AVSampleRateKey: 12000.0,
+                AVNumberOfChannelsKey: 1 as NSNumber,
+                AVEncoderAudioQualityKey: AVAudioQuality.High.rawValue
+            ]
+            
+            audioRecorder = try? AVAudioRecorder(URL:url, settings: settings)
             audioRecorder.prepareToRecord()
             audioRecorder.record()
         }else if(sender.state == UIGestureRecognizerState.Ended){
